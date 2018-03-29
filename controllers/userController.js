@@ -8,10 +8,17 @@ exports.index = function(req, res) {
         user_count: function(callback) {
             User.count(callback);
         },
+        list_users: function(callback) {
+            User.find(callback)
+              .sort([['first_name', 'ascending']])
+        },
+
     }, function(err, results) {
-        res.render('index', { title: 'Users Data Home', error: err, data: results });
+        res.render('index', { title: 'Users Data Home', error: err, userCount: results.user_count, userList: results.list_users });
     });
+
 };
+
 
 // Handle book create on POST.
 exports.user_create = [
@@ -29,7 +36,10 @@ exports.user_create = [
     (req, res, next) => {
 
 
+
         // Extract the validation errors from a request.
+      //  const errors = validationResult(req);
+
         // Create a Book object with escaped and trimmed data.
         var user = new User(
           { first_name: req.body.first_name
@@ -40,7 +50,7 @@ exports.user_create = [
             user.save(function (err) {
                 if (err) { return next(err); }
                    // Successful - redirect to new book record.
-              //     res.redirect(user);
+                    res.redirect('/users');
                 });
 
     }
